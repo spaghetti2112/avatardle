@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Wordle</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Avatar Character Wordle</h1>
+        <p>Guess the Avatar character's name based on the hints below!</p>
+
+        <div id="clues">
+            <p id="bending"></p>
+            <p id="origin"></p>
+            <p id="appearance"></p>
+        </div>
+
+        <input type="text" id="guess-input" placeholder="Enter your guess" maxlength="20">
+        <button id="submit-guess">Submit Guess</button>
+
+        <div id="feedback"></div>
+        <div id="attempts-left"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

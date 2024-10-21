@@ -3,34 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatarle - Guess the Avatar Character</title>
+    <title>Avatar Character Wordle</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <h1>Avatardle</h1>
-        <p>Guess the Avatar character! You get one guess per day.</p>
+        <h1>Avatar Character Wordle</h1>
+        <p>Guess the Avatar character! You have one chance per day.</p>
 
-        <!-- Hint Section -->
-        <div class="hint-section">
-            <div id="bending-hint" class="hint">Bending: ???</div>
-            <div id="origin-hint" class="hint">Origin: ???</div>
-            <div id="appearance-hint" class="hint">First Appearance: ???</div>
+        <div id="grid-container">
+            <div id="grid"></div>
         </div>
 
-        <!-- Input for Guessing -->
-        <input type="text" id="guess-input" placeholder="Enter your guess" maxlength="20">
-        <button id="submit-guess">Submit</button>
+        <input type="text" id="guess-input" placeholder="Enter your guess" maxlength="20" disabled>
+        <button id="submit-guess" disabled>Submit Guess</button>
 
-        <!-- Feedback for the Guess -->
+        <div id="clues">
+            <p id="bending"></p>
+            <p id="origin"></p>
+            <p id="appearance"></p>
+        </div>
+
         <div id="feedback"></div>
-
-        <!-- Attempts Left -->
-        <div id="attempts-left">1 attempt remaining today.</div>
-
-        <!-- Display message when the player is out of guesses -->
-        <div id="out-of-guesses-message"></div>
+        <div id="attempts-left"></div>
     </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
 
     <script src="app.js"></script>
 </body>

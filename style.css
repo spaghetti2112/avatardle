@@ -1,7 +1,6 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f0f8ff;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
     margin: 0;
     padding: 0;
 }
@@ -12,12 +11,13 @@ h1 {
 
 .game-container {
     margin: 50px auto;
-    width: 80%;
+    width: 90%;
     max-width: 600px;
     padding: 20px;
     border-radius: 10px;
     background-color: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 #grid-container {
@@ -28,13 +28,13 @@ h1 {
 
 #grid {
     display: grid;
-    grid-template-columns: repeat(5, 50px);
+    grid-template-columns: repeat(5, 60px);
     grid-gap: 10px;
 }
 
 .tile {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border: 2px solid #ccc;
     font-size: 24px;
     font-weight: bold;
@@ -42,20 +42,21 @@ h1 {
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    border-radius: 5px;
 }
 
 .correct {
-    background-color: #6aaa64; /* green */
+    background-color: #6aaa64; /* Green */
     border-color: #6aaa64;
 }
 
 .present {
-    background-color: #c9b458; /* yellow */
+    background-color: #c9b458; /* Yellow */
     border-color: #c9b458;
 }
 
 .absent {
-    background-color: #787c7e; /* gray */
+    background-color: #787c7e; /* Gray */
     border-color: #787c7e;
 }
 
@@ -71,9 +72,35 @@ input, button {
     color: #333;
 }
 
-
-#attempts-left {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #006064;
+#hints {
+    margin-top: 20px;
 }
+
+#share-results {
+    margin-top: 20px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+#share-results:hover {
+    background-color: #005fa3;
+}
+@media (max-width: 600px) {
+    #grid {
+        grid-template-columns: repeat(4, 50px); /* Adjust for smaller screens */
+    }
+
+    .tile {
+        width: 50px;
+        height: 50px;
+    }
+
+    #submit-guess, #share-results {
+        width: 100%;
+    }
+}
+

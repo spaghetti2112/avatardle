@@ -3,53 +3,64 @@ const characters = [
     { name: "katara", bending: "waterbender", origin: "Southern Water Tribe", appearance: "ATLA" },
     { name: "zuko", bending: "firebender", origin: "Fire Nation", appearance: "ATLA" },
     { name: "toph", bending: "earthbender", origin: "Earth Kingdom", appearance: "ATLA" },
-    { name: "sokka", bending: "non-bender", origin: "Southern Water Tribe", appearance: "ATLA" },
-    { name: "iroh", bending: "firebender", origin: "Fire Nation", appearance: "ATLA" },
     { name: "korra", bending: "waterbender/Avatar", origin: "Southern Water Tribe", appearance: "LoK" },
     { name: "mako", bending: "firebender", origin: "Republic City", appearance: "LoK" },
-    { name: "bolin", bending: "earthbender", origin: "Republic City", appearance: "LoK" },
-    { name: "asami", bending: "non-bender", origin: "Republic City", appearance: "LoK" },
-    { name: "lin", bending: "earthbender (metal)", origin: "Republic City", appearance: "LoK" },
-    { name: "tenzin", bending: "airbender", origin: "Republic City", appearance: "LoK" }
+    { name: "bolin", bending: "earthbender (lavabender)", origin: "Republic City", appearance: "LoK" }
 ];
 
-// Function to get today's character using date
-function getCharacterOfTheDay(date) {
-    const hash = [...date].reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return characters[hash % characters.length];
+const today = new Date().toISOString().split('T')[0];
+const seed = new Date().getDate(); // Use the date to pick the daily character
+
+let chosenCharacter = characters[seed % characters.length];
+let attempts = 1; // Only one guess allowed per day
+
+// Check if the user already played today
+if (localStorage.getItem('lastPlayed') === today) {
+    document.getElementById('feedback').textContent = `You already guessed today! The character was ${chosenCharacter.name.toUpperCase()}.`;
+} else {
+    document.getElementById('guess-input').disabled = false;
+    document.getElementById('submit-guess').disabled = false;
 }
 
-const today = new Date().toISOString().split('T')[0]; // Get current date (e.g., '2024-10-21')
-const chosenCharacter = getCharacterOfTheDay(today);
+document.getElementById('bending').textContent = `Bending: ${chosenCharacter.bending}`;
+document.getElementById('origin').textContent = `Origin: ${chosenCharacter.origin}`;
+document.getElementById('appearance').textContent = `First Appearance: ${chosenCharacter.appearance}`;
 
-// Check if user has already guessed today
-const gameState = JSON.parse(localStorage.getItem('avatarleState')) || {};
+document.getElementById('submit-guess').addEventListener('click', () => {
+    let guess = document.getElementById('guess-input').value.toLowerCase();
+    if (guess === chosenCharacter.name) {
+        document.getElementById('feedback').textContent = `Congratulations! You guessed the character: ${chosenCharacter.name.toUpperCase()}!`;
+    } else {
+        document.getElementById('feedback').textContent = `Incorrect! The character was ${chosenCharacter.name.toUpperCase()}.`;
+    }
 
-if (gameState[today] && gameState[today].hasPlayed) {
-    document.getElementById('feedback').textContent = `You've already played today! The character was ${chosenCharacter.name.toUpperCase()}.`;
+    localStorage.setItem('lastPlayed', today); // Mark as played for today
     document.getElementById('guess-input').disabled = true;
     document.getElementById('submit-guess').disabled = true;
-} else {
-    // Show hints
-    document.getElementById('bending-hint').textContent = `Bending: ${chosenCharacter.bending}`;
-    document.getElementById('origin-hint').textContent = `Origin: ${chosenCharacter.origin}`;
-    document.getElementById('appearance-hint').textContent = `First Appearance: ${chosenCharacter.appearance}`;
+    updateGrid(guess, chosenCharacter.name);
+});
 
-    // Handle guess submission
-    document.getElementById('submit-guess').addEventListener('click', () => {
-        let guess = document.getElementById('guess-input').value.toLowerCase();
-        let feedback = '';
+function updateGrid(guess, name) {
+    let grid = document.getElementById('grid');
+    grid.innerHTML = ''; // Clear the grid before updating
 
-        if (guess === chosenCharacter.name) {
-            feedback = `Correct! The character was ${chosenCharacter.name.toUpperCase()}!`;
+    for (let i = 0; i < guess.length; i++) {
+        let tile = document.createElement('div');
+        tile.classList.add('tile');
+
+        if (guess[i] === name[i]) {
+            tile.classList.add('correct'); // Green tile for correct letter
+        } else if (name.includes(guess[i])) {
+            tile.classList.add('present'); // Yellow tile for correct letter in wrong place
         } else {
-            feedback = `Incorrect! The character was ${chosenCharacter.name.toUpperCase()}. Try again tomorrow!`;
+            tile.classList.add('absent'); // Gray tile for incorrect letter
         }
 
-        // Update feedback and store the state
-        document.getElementById('feedback').textContent = feedback;
-        gameState[today] = { hasPlayed: true, guess: guess };
-        localStorage.setItem('avatarleState', JSON.stringify(gameState));
+        tile.textContent = guess[i].toUpperCase();
+        grid.appendChild(tile);
+    }
+}
+
 
         // Disable the input and button after a guess
         document.getElementById('guess-input').disabled = true;

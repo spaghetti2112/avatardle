@@ -1,12 +1,4 @@
-const characters = [
-    { name: "aang", bending: "Airbender/Avatar", origin: "Southern Air Temple", appearance: "ATLA" },
-    { name: "katara", bending: "Waterbender", origin: "Southern Water Tribe", appearance: "ATLA" },
-    { name: "zuko", bending: "Firebender", origin: "Fire Nation", appearance: "ATLA" },
-    { name: "toph", bending: "Earthbender", origin: "Earth Kingdom", appearance: "ATLA" },
-    { name: "korra", bending: "Waterbender/Avatar", origin: "Southern Water Tribe", appearance: "LoK" },
-    { name: "mako", bending: "Firebender", origin: "Republic City", appearance: "LoK" },
-    { name: "bolin", bending: "Earthbender (Lavabender)", origin: "Republic City", appearance: "LoK" }
-];
+import { characters } from './data/characters.js';
 
 // Function to select the daily character
 const today = new Date().toISOString().split('T')[0];

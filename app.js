@@ -53,7 +53,7 @@ const fallbackSvg = `data:image/svg+xml;utf8,${encodeURIComponent(`
 // Try  .jpg then fallback
 function loadPortrait(c){
   const trySrcs = [
-    `images/${slug(c.name)}.jpg`,
+    `Images/${slug(c.name)}.jpg`,
   ];
   (function tryNext(i=0){
     if (i >= trySrcs.length){ portrait.src = fallbackSvg; return; }

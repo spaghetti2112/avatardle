@@ -1,35 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatar Character Wordle</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avatar Character Wordle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <meta name="color-scheme" content="light dark">
 </head>
 <body>
-    <div class="game-container">
-        <h1>Avatar Character Wordle</h1>
-        <p>Guess the Avatar character! You have one chance per day.</p>
+  <div class="bg-accent"></div>
+  <div class="bg-accent-2"></div>
 
-        <div id="grid-container">
-            <div id="grid"></div>
-        </div>
+  <header class="site-header">
+  <img src="images/icon-avatar jpg" alt="Avatar Logo" class="site-logo">
+  <div class="site-title-wrap">
+    <h1 class="site-title">Avatardle</h1>
+    <p class="site-subtitle">Guess One Charcter A Day From ATLA Or LOK</p>
+  </div>
+  <img src="images/icon-avatar jpg" alt="" aria-hidden="true" class="site-logo site-logo-ghost">
+</header>
 
-        <!-- Input field for typing guess -->
-        <input type="text" id="guess-input" placeholder="Enter your guess" maxlength="20">
-        <button id="submit-guess">Submit Guess</button>
 
-        <div id="hints">
-            <p id="bending"></p>
-            <p id="origin"></p>
-            <p id="appearance"></p>
-        </div>
-
-        <div id="feedback"></div>
-        <button id="share-results">Share Results</button>
+  <main class="game-container">
+  <section class="card hero-card">
+    <div class="portrait-wrap">
+      <img id="portrait" class="portrait" alt="Mystery character portrait" />
+      <div id="portrait-mask" class="portrait-mask"></div>
     </div>
 
-   <script type="module" src="app.js"></script>
+    <div class="meta">
+      <div class="chips">
+        <span class="chip" id="chip-type">Type: ?</span>
+        <span class="chip" id="chip-appearance">Series: ?</span>
+      </div>
+      <div class="hints-inline">
+        <div class="hint"><span> Bending:</span> <strong id="bending">???</strong></div>
+        <div class="hint"><span>Origin:</span> <strong id="origin">???</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card input-card">
+    <div class="guess-row">
+      <input type="text" id="guess-input" placeholder="Type a character name…" autocomplete="off" inputmode="text" />
+      <button id="submit-guess" class="btn primary">Guess</button>
+    </div>
+    <div id="suggestions" class="suggestions"></div>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+  </section>
+
+  <!-- Hints  -->
+  <section class="card hints-card">
+    <h2 class="h2">Hints</h2>
+    <ul id="hints-list" class="hints-list">
+      <!-- will be populated progressively -->
+    </ul>
+  </section>
+
+  <footer class="credits">
+    <p>
+      Ziyad © 2025
+    </p>
+  </footer>
+</main>
+
+<!-- scripts: characters.js MUST load before app.js -->
+<script src="characters.js"></script>
+<script src="app.js"></script>
+
+
 </body>
 </html>
-

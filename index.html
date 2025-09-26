@@ -1,76 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avatar Character Wordle</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Avatardle</title>
   <meta name="color-scheme" content="light dark">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="bg-accent"></div>
-  <div class="bg-accent-2"></div>
-
+  <!-- Header: logo left, title + subtitle centered via 3-col grid -->
   <header class="site-header">
-  <img src="Images/icon-avatar.jpg" alt="Avatar Logo" class="site-logo">
-  <div class="site-title-wrap">
-    <h1 class="site-title">Avatardle</h1>
-    <p class="site-subtitle">Guess One Charcter A Day From ATLA Or LOK</p>
-  </div>
-  <img src="Images/icon-avatar.jpg" alt="" aria-hidden="true" class="site-logo site-logo-ghost">
-</header>
-
+    <img src="images/avatar-icon.jpg" alt="Avatar Logo" class="site-logo">
+    <div class="site-title-wrap">
+      <h1 class="site-title">Avatardle</h1>
+      <p class="site-subtitle">One character a day</p>
+    </div>
+    <img src="images/avatar-icon.jpg" alt="" aria-hidden="true" class="site-logo site-logo-ghost">
+  </header>
 
   <main class="game-container">
-  <section class="card hero-card">
-    <div class="portrait-wrap">
-      <img id="portrait" class="portrait" alt="Mystery character portrait" />
-      <div id="portrait-mask" class="portrait-mask"></div>
-    </div>
-
-    <div class="meta">
-      <div class="chips">
-        <span class="chip" id="chip-type">Type: ?</span>
-        <span class="chip" id="chip-appearance">Series: ?</span>
+    <section class="card hero-card">
+      <div class="portrait-wrap">
+        <img id="portrait" class="portrait" alt="Mystery character portrait" />
+        <div id="portrait-mask" class="portrait-mask"></div>
       </div>
-      <div class="hints-inline">
-        <div class="hint"><span> Bending:</span> <strong id="bending">???</strong></div>
-        <div class="hint"><span>Origin:</span> <strong id="origin">???</strong></div>
+
+      <div class="meta">
+        <div class="chips">
+          <span class="chip" id="chip-type">Type: —</span>
+          <span class="chip" id="chip-appearance">Series: —</span>
+        </div>
+        <div class="hints-inline">
+          <div class="hint"><img src="images/icon-bending.jpg" class="icon" alt=""><strong id="bending">???</strong></div>
+          <div class="hint"><img src="images/icon-origin.jpg" class="icon" alt=""><strong id="origin">???</strong></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="card input-card">
-    <div class="guess-row">
-      <input type="text" id="guess-input" placeholder="Type a character name…" autocomplete="off" inputmode="text" />
-      <button id="submit-guess" class="btn primary">Guess</button>
-    </div>
-    <div id="suggestions" class="suggestions"></div>
-    <div id="feedback" class="feedback" aria-live="polite"></div>
-  </section>
+    <section class="card input-card">
+      <div class="guess-row">
+        <input type="text" id="guess-input" placeholder="Type a character name…" autocomplete="off" inputmode="text" />
+        <button id="submit-guess" class="btn primary">Guess</button>
+      </div>
+      <div id="suggestions" class="suggestions"></div>
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+    </section>
 
-  <!-- Hints  -->
-  <section class="card hints-card">
-    <h2 class="h2">Hints</h2>
-    <ul id="hints-list" class="hints-list">
-      <!-- will be populated progressively -->
-    </ul>
-  </section>
+    <!-- Hints (no wordle grid) -->
+    <section class="card hints-card">
+      <h2 class="h2">Hints</h2>
+      <ul id="hints-list" class="hints-list"></ul>
+    </section>
 
-  <footer class="credits">
-    <p>
-      Ziyad © 2025
-    </p>
-  </footer>
-</main>
+    <footer class="credits">
+      <p>Place images in <code>images/</code> (no leading slash). Filenames should be <em>kebab-case</em> (e.g. <code>aang.svg</code>).</p>
+    </footer>
+  </main>
 
-<!-- scripts: characters.js MUST load before app.js -->
-<script src="characters.js" defer></script>
-<script src="app.js" defer></script>
-
-
+  <!-- IMPORTANT: load characters.js BEFORE app.js; use defer to guarantee order -->
+  <script src="characters.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
+

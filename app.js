@@ -30,27 +30,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   const fallbackSvg=`data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#7ac4ff'/><stop offset='1' stop-color='#7affc7'/></linearGradient></defs><rect width='256' height='256' fill='url(#g)'/><circle cx='128' cy='96' r='44' fill='rgba(0,0,0,0.2)'/><rect x='48' y='152' width='160' height='56' rx='28' fill='rgba(0,0,0,0.2)'/></svg>`)}`;
 
-  function loadPortrait(c){
-    if(!portrait) return;
-    const s = slug(c.name);
-    const orig = c.name;
-    const origEnc = encodeURIComponent(orig);
-    const bases = [
-      `images/${s}`, `Images/${s}`,
-      `images/${orig}`, `images/${origEnc}`,
-      `Images/${orig}`, `Images/${origEnc}`
-    ];
-    const exts = ['svg','SVG','png','PNG','jpg','JPG','jpeg','JPEG'];
-    const candidates = [];
-    for(const b of bases){ for(const e of exts){ candidates.push(`${b}.${e}`); } }
-    (function tryNext(i=0){
-      if(i>=candidates.length){ portrait.src=fallbackSvg; return; }
-      const test=new Image();
-      test.onload=()=>{ portrait.src=test.src; };
-      test.onerror=()=>tryNext(i+1);
-      test.src=candidates[i];
-    })();
+function loadPortrait(c) {
+  if (!portrait) return;
+  const s = slug(c.name);
+  const orig = c.name;
+  const origEnc = encodeURIComponent(orig);
+  const bases = [
+    `images/${s}`, `Images/${s}`,
+    `images/${orig}`, `images/${origEnc}`,
+    `Images/${orig}`, `Images/${origEnc}`
+  ];
+  const exts = ['svg','SVG','png','PNG','jpg','JPG','jpeg','JPEG'];
+  const candidates = [];
+  for (const b of bases) {
+    for (const e of exts) {
+      candidates.push(`${b}.${e}`);
+    }
   }
+  (function tryNext(i=0){
+    if (i >= candidates.length) {
+      portrait.src = fallbackSvg;
+      return;
+    }
+    const test = new Image();
+    test.onload = () => { portrait.src = test.src; };
+    test.onerror = () => tryNext(i+1);
+    test.src = candidates[i];
+  })();
+}
+
 
   if(answer){
     chipType.textContent = `Type: ${answer.type}`;

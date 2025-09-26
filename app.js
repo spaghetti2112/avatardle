@@ -51,18 +51,44 @@ const fallbackSvg = `data:image/svg+xml;utf8,${encodeURIComponent(`
 `)}`;
 
 // Try  .jpg then fallback
+// replace your loadPortrait() with this one
+
+const byName = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu,'').trim().toLowerCase();
+const slug = (s) => byName(s).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+
 function loadPortrait(c){
-  const trySrcs = [
-    `Images/${slug(c.name)}.jpg`,
+  const base = `images/${slug(c.name)}`;
+  const candidates = [
+    `${base}.svg`, `${base}.SVG`,
+    `${base}.png`, `${base}.PNG`,
+    `${base}.jpg`, `${base}.JPG`, `${base}.jpeg`, `${base}.JPEG`,
   ];
+
   (function tryNext(i=0){
-    if (i >= trySrcs.length){ portrait.src = fallbackSvg; return; }
+    if (i >= candidates.length){
+      console.warn('No image found for:', c.name, '— tried:', candidates);
+      portrait.src = `data:image/svg+xml;utf8,${encodeURIComponent(`
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'>
+          <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+            <stop offset='0' stop-color='#7ac4ff'/><stop offset='1' stop-color='#7affc7'/>
+          </linearGradient></defs>
+          <rect width='256' height='256' fill='url(#g)'/>
+          <circle cx='128' cy='96' r='44' fill='rgba(0,0,0,0.2)'/>
+          <rect x='48' y='152' width='160' height='56' rx='28' fill='rgba(0,0,0,0.2)'/>
+        </svg>
+      `)}`;
+      return;
+    }
     const test = new Image();
     test.onload = () => { portrait.src = test.src; };
-    test.onerror = () => tryNext(i+1);
-    test.src = trySrcs[i];
+    test.onerror = () => {
+      console.warn('Image not found:', candidates[i]);
+      tryNext(i+1);
+    };
+    test.src = candidates[i];
   })();
 }
+
 if (answer) loadPortrait(answer);
 
 // Chips; show series/type; mask inline details until solved

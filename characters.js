@@ -112,3 +112,4 @@ window.characters = [
   { "name": "Wan", "bending": "Firebender/Avatar", "origin": "Lion Turtle City", "appearance": "LoK", "type": "Avatar" }
 ];
 
+

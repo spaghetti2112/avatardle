@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="style.css" />
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="images/icon-avatar.jpg" type="image/png">
+  <link rel="preload" as="script" href="app.js">
+
 
 </head>
 <body>
@@ -68,17 +70,6 @@
     </p>
   </footer>
 </main>
-<!-- inline check -->
-<script>
-  console.log("[Avatardle] inline sanity check running");
-  document.addEventListener("DOMContentLoaded", () => {
-    const d = document.createElement("div");
-    d.textContent = "Inline JS ran ✓";
-    d.style.cssText="position:fixed;left:12px;bottom:12px;background:#0b0f24;color:#fff;padding:6px 8px;border-radius:6px;z-index:9999;font:12px/1.3 system-ui";
-    document.body.appendChild(d);
-  });
-</script>
-
 
 <script>
   // Register a Service Worker that rescues image requests by trying alternate paths
@@ -100,5 +91,3 @@
 
 </body>
 </html>
-
-

@@ -17,6 +17,7 @@ window.__AV_DEBUG__ = { enabled: DEBUG_C }; // expose to console
 
 
 
+
 window.characters = [
   // --- AVATAR: THE LAST AIRBENDER (Humans) ---
   { "name": "Aang", "bending": "Airbender/Avatar", "origin": "Southern Air Temple", "appearance": "ATLA", "type": "Avatar" },
@@ -130,4 +131,3 @@ window.characters = [
   // First Avatar
   { "name": "Wan", "bending": "Firebender/Avatar", "origin": "Lion Turtle City", "appearance": "LoK", "type": "Avatar" }
 ];
-})();

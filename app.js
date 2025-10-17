@@ -1,15 +1,23 @@
 // === Avatar Character Game — Progressive SHOW Hints (no letter clues), Multi-Guess per Day ===
+// --- DEBUG TOGGLE ---
+// Enable with:  ?debug=1  OR  localStorage.AV_DEBUG = "1"  (press Ctrl+Shift+D to toggle)
+const DEBUG = /(^|[?&])debug=1(&|$)/.test(location.search) || localStorage.getItem('AV_DEBUG') === '1';
+window.__AV_DEBUG__ = { enabled: DEBUG }; // expose to console
 
 // --- BOOT BEACON:  app.js ---
 // (Debug helper so you can see when/if this file actually loads)
 (function(){
   const stamp = new Date().toISOString();
   console.log("[Avatardle] app.js loaded at", stamp);
+  if (!DEBUG) return; // <-- only show on-screen in debug mode
   const beacon = document.createElement("div");
+  beacon.id = "av-debug-beacon";
   beacon.style.cssText = "position:fixed;right:12px;bottom:12px;background:#111827;color:#fff;padding:8px 10px;border-radius:8px;z-index:9999;font:12px/1.3 system-ui";
   beacon.textContent = "app.js loaded • " + stamp;
   document.body.appendChild(beacon);
 })();
+
+
 
 // --- BOOT GUARD ---
 // Prevents double-initialization if app.js is included twice accidentally.
@@ -51,96 +59,57 @@ if (window.__AVATARDLE_BOOTED__) {
 
 // Attempts multiple image paths/casings/extensions; PRIORITIZES exact original name first.
 // This will load "Images/Prince Wu.jpg" even if your character name is "Prince Wu".
-function loadPortrait(imgEl, name, characterObj) {
-  if (!imgEl || !name) return;
+// Build candidates but DO NOT reveal yet; just find a working URL and cache it.
+// We keep the visible <img> on a neutral placeholder until the player solves.
+function loadPortraitHidden(characterObj) {
+  if (!characterObj || !characterObj.name) return;
 
-  // ---- Build base variants ----
-  const orig    = name;                         // "Prince Wu"
-  const encOrig = encodeURIComponent(orig);     // "Prince%20Wu"
-  const noSp    = orig.replace(/\s+/g, '');     // "PrinceWu"
-  const dash    = orig.replace(/\s+/g, '-');    // "Prince-Wu"
-  const lower   = orig.toLowerCase();
-  const upper   = orig.toUpperCase();
+  const name = characterObj.name;
+  const s = slug(name);
+  const orig = name;
+  const enc  = encodeURIComponent(orig);
+  const noSp = orig.replace(/\s+/g, '');
+  const dash = orig.replace(/\s+/g, '-');
+  const variants = Array.from(new Set([orig, enc, noSp, dash, orig.toLowerCase(), orig.toUpperCase(), s, s.toUpperCase()]));
 
-  // Your existing slug function:
-  const s       = slug(orig);                   // "prince-wu"
-  const sUpper  = s.toUpperCase();
-
-  // Folders to try
-  const folders = [
-    'Images','images',              // exact originals FIRST
-    './Images','./images'
-  ];
-  // If you have repoBase for GitHub Pages:
+  const folders = ['Images','images','./Images','./images'];
   if (typeof repoBase === 'string') {
     const base = repoBase.replace(/\/+$/,'');
     folders.push(`${base}/Images`, `${base}/images`);
   }
-
-  // Extensions to try (put JPG first to match your sample)
   const exts = ['jpg','jpeg','png','webp','svg','JPG','JPEG','PNG','WEBP','SVG'];
 
-  // 1) Allow explicit mapping (optional per-character)
+  // explicit mapping support
   const explicit = [];
-  if (characterObj?.image) {
-    if (Array.isArray(characterObj.image)) explicit.push(...characterObj.image);
-    else explicit.push(characterObj.image);
-  }
-  if (characterObj?.images && Array.isArray(characterObj.images)) {
-    explicit.push(...characterObj.images);
-  }
-  const explicitCandidates = explicit.filter(Boolean);
+  if (characterObj.image) explicit.push(...(Array.isArray(characterObj.image)? characterObj.image : [characterObj.image]));
+  if (Array.isArray(characterObj.images)) explicit.push(...characterObj.images);
 
-  // 2) PRIORITIZE exact original name (with spaces & encoding) before any slug guesses
-  const exactNames = [orig, encOrig, noSp, dash, lower, upper, s, sUpper];
+  const candidates = [
+    ...explicit,
+    ...folders.flatMap(f => variants.flatMap(v => exts.flatMap(e => [
+      `${f}/${v}.${e}`,
+      `/${f.replace(/^\.\//,'')}/${v}.${e}`
+    ])))
+  ];
 
-  // Build candidates in strong priority order:
-  const candidates = [];
-
-  // a) Explicit first
-  candidates.push(...explicitCandidates);
-
-  // b) Exact original (Images/ + images/), both encoded and raw
-  for (const f of folders) {
-    for (const base of [orig, encOrig]) {
-      for (const e of exts) {
-        candidates.push(`${f}/${base}.${e}`);
-        // absolute-path variant helps some servers
-        candidates.push(`/${f.replace(/^\.\//,'')}/${base}.${e}`);
-      }
-    }
-  }
-
-  // c) Other close variants (no spaces, dashes, lower/upper, slugs)
-  for (const f of folders) {
-    for (const base of [noSp, dash, lower, upper, s, sUpper]) {
-      for (const e of exts) {
-        candidates.push(`${f}/${base}.${e}`);
-        candidates.push(`/${f.replace(/^\.\//,'')}/${base}.${e}`);
-      }
-    }
-  }
-
-  // Debug: show first 20 candidates
-  console.log('[Avatardle] Trying portrait candidates for', name, candidates.slice(0,20), `... (+${Math.max(0,candidates.length-20)} more)`);
-
-  const fallbackSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='256' height='256' fill='#3b4263'/><text x='50%' y='50%' font-size='20' text-anchor='middle' fill='#fff' dy='.3em'>No Image</text></svg>"
-  )}`;
-
+  // Preload into memory, but don't set <img>.src yet.
   (function tryNext(i=0){
     if (i >= candidates.length) {
-      console.warn('[Avatardle] No portrait found for', name, '→ fallback');
-      imgEl.src = fallbackSvg;
+      console.warn('[Avatardle] No portrait URL resolved for', name);
+      answerImageUrl = null;
       return;
     }
     const url = candidates[i];
     const test = new Image();
-    test.onload  = () => { console.log('[Avatardle] Loaded portrait:', url); imgEl.src = url; };
-    test.onerror = () => { if (i < 10) console.log('[Avatardle] Missed:', url); tryNext(i+1); };
+    test.onload = () => {
+      answerImageUrl = new URL(url, location.href).toString();
+      console.log('[Avatardle] Preloaded portrait (hidden):', answerImageUrl);
+    };
+    test.onerror = () => tryNext(i+1);
     test.src = url;
   })();
 }
+
 
 
 
@@ -210,20 +179,31 @@ if (!Number.isFinite(idx) || idx < 0 || idx >= total) {
 }
 
 const answer = characters[idx];
-console.log('[Avatardle] picked index:', idx, 'name:', answer && answer.name);
+console.log('[Avatardle] picked index:', idx);
 
 if (!answer) {
   feedback && (feedback.textContent = `No character available today (failed to pick; idx=${idx}, total=${total})`);
   return;
 }
 
+// Preloaded portrait URL (kept hidden until solved)
+let answerImageUrl = null;
+
+// A neutral placeholder (tiny inline SVG) shown before solving
+const silhouetteSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0b1020'/><stop offset='1' stop-color='#1b2140'/></linearGradient></defs><rect width='256' height='256' rx='18' fill='url(#g)'/><circle cx='128' cy='88' r='46' fill='#2b345e'/><rect x='56' y='150' width='144' height='60' rx='30' fill='#2b345e'/></svg>"
+)}`;
+
 
       // Seed top UI chips and portrait (hide specific values until solved)
-      chipType && (chipType.textContent = `Type: ${answer.type}`);
-      chipAppearance && (chipAppearance.textContent = `Series: ${seriesLabel(answer.appearance)}`);
+      chipType && (chipType.textContent = `Type: ${"???"}`);
+      chipAppearance && (chipAppearance.textContent = `Series: ???`);
       bendingEl && (bendingEl.textContent = '???');
       originEl && (originEl.textContent = '???');
-      loadPortrait(portrait, answer.name, answer);
+      // Show a neutral silhouette now; start preloading real image in the background.
+      if (portrait) portrait.src = silhouetteSvg;
+      loadPortraitHidden(answer);
+
 
       // Build show-centric hints (no letter/length hints)
       const allHints = [
@@ -254,11 +234,44 @@ if (!answer) {
       function renderHints(){
         if(!hintsList) return;
         hintsList.innerHTML='';
+
         allHints.forEach((h,idx)=>{
           const li=document.createElement('li');
           if(idx<state.unlocked||state.solved){ li.textContent=h.text; }
           else{ li.classList.add('locked'); li.textContent=`Locked hint #${idx+1} — make another guess to unlock.`; }
           hintsList.appendChild(li);
+          function renderHints(){
+  if(!hintsList) return;
+  hintsList.innerHTML='';
+
+  allHints.forEach((h,idx)=>{
+    const li=document.createElement('li');
+    if(idx<state.unlocked||state.solved){ li.textContent=h.text; }
+    else{ li.classList.add('locked'); li.textContent=`Locked hint #${idx+1} — make another guess to unlock.`; }
+    hintsList.appendChild(li);
+  });
+
+  // Reveal chips in sync with hints
+  const seriesRevealed = state.solved || state.unlocked > 0;  // hint #1 unlocked
+  const typeRevealed   = state.solved || state.unlocked > 3;  // hint #4 unlocked
+
+  chipAppearance && (chipAppearance.textContent = seriesRevealed
+    ? `Series: ${seriesLabel(answer.appearance)}`
+    : 'Series: ???');
+
+  chipType && (chipType.textContent = typeRevealed
+    ? `Type: ${answer.type==='Animal'?'Animal/Companion':answer.type}`
+    : 'Type: ???');
+
+  // When solved, also reveal the in-card fields
+  if(state.solved){
+    bendingEl && (bendingEl.textContent=answer.bending);
+    originEl && (originEl.textContent=answer.origin);
+  }
+}
+
+
+          
         });
         if(state.solved){
           bendingEl && (bendingEl.textContent=answer.bending);
@@ -311,6 +324,16 @@ if (!answer) {
           submitBtn && (submitBtn.disabled=true);
           bendingEl && (bendingEl.textContent=answer.bending);
           originEl && (originEl.textContent=answer.origin);
+          // Reveal the real portrait now (if we found one)
+          if (portrait) {
+            if (answerImageUrl) {
+             portrait.src = answerImageUrl;           // instant reveal (already cached)
+            } else {
+              // Fallback: keep silhouette (no working image found)
+              portrait.src = silhouetteSvg;
+            }
+         }
+
         } else {
           state.unlocked=Math.min(allHints.length, state.unlocked+1);
           feedback && (feedback.textContent=`Not ${guess}. Hint #${state.unlocked} unlocked.`);

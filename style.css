@@ -212,7 +212,16 @@ body{
 
 /* --- Force portrait to display clearly --- */
 #portrait {
-  opacity: 1 !important;
-  filter: none !important;
-  transition: none !important;
+  display: block;
+  width: 160px;        /* adjust to your layout */
+  height: 160px;       /* adjust to your layout */
+  object-fit: contain;
+  opacity: 1;
+  filter: none;
+}
+
+/* Hide any stray debug widgets by default (they only show when DEBUG=true) */
+#av-debug-beacon,
+#av-debug-panel {
+  display: none;
 }

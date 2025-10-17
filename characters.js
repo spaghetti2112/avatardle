@@ -1,11 +1,19 @@
+// --- DEBUG TOGGLE ---
+// Enable with:  ?debug=1  OR  localStorage.AV_DEBUG = "1"  (press Ctrl+Shift+D to toggle)
+const DEBUG_C = /(^|[?&])debug=1(&|$)/.test(location.search) || localStorage.getItem('AV_DEBUG') === '1';
+window.__AV_DEBUG__ = { enabled: DEBUG_C }; // expose to console
+
 // --- BOOT BEACON:  charcters.js ---
 (function(){
   const stamp = new Date().toISOString();
-  console.log("[Avatardle] charcters.js loaded at", stamp);
+  console.log("[Avatardle] characters.js loaded at", stamp);
+  if (!DEBUG_C) return; // <-- only show on-screen in debug mode
   const beacon = document.createElement("div");
+  beacon.id = "av-debug-beacon";
   beacon.style.cssText = "position:fixed;right:12px;bottom:12px;background:#111827;color:#fff;padding:8px 10px;border-radius:8px;z-index:9999;font:12px/1.3 system-ui";
-  beacon.textContent = "charcters.js loaded • " + stamp;
+  beacon.textContent = "characters.js loaded • " + stamp;
   document.body.appendChild(beacon);
+})();
 
 
 

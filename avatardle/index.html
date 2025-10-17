@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avatar Character Wordle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="images/icon-avatar.jpg" type="image/png">
+
+</head>
+<body>
+  <div class="bg-accent"></div>
+  <div class="bg-accent-2"></div>
+
+  <header class="site-header">
+  <img src="Images/icon-avatar.jpg" alt="Avatar Logo" class="site-logo">
+  <div class="site-title-wrap">
+    <h1 class="site-title">Avatardle</h1>
+    <p class="site-subtitle">Guess One Charcter A Day From ATLA Or LOK</p>
+  </div>
+  <img src="Images/icon-avatar.jpg" alt="" aria-hidden="true" class="site-logo site-logo-ghost">
+</header>
+
+
+  <main class="game-container">
+  <section class="card hero-card">
+    <div class="portrait-wrap">
+      <img id="portrait" class="portrait" alt="Mystery character portrait" />
+      <div id="portrait-mask" class="portrait-mask"></div>
+    </div>
+
+    <div class="meta">
+      <div class="chips">
+        <span class="chip" id="chip-type">Type: ?</span>
+        <span class="chip" id="chip-appearance">Series: ?</span>
+      </div>
+      <div class="hints-inline">
+        <div class="hint"><span> Bending:</span> <strong id="bending">???</strong></div>
+        <div class="hint"><span>Origin:</span> <strong id="origin">???</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card input-card">
+    <div class="guess-row">
+      <input type="text" id="guess-input" placeholder="Type a character name…" autocomplete="off" inputmode="text" />
+      <button id="submit-guess" class="btn primary">Guess</button>
+    </div>
+    <div id="suggestions" class="suggestions"></div>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+  </section>
+
+  <!-- Hints  -->
+  <section class="card hints-card">
+    <h2 class="h2">Hints</h2>
+    <ul id="hints-list" class="hints-list">
+      <!-- will be populated progressively -->
+    </ul>
+  </section>
+
+  <footer class="credits">
+    <p>
+      Ziyad © 2025
+    </p>
+  </footer>
+</main>
+<!-- inline check -->
+<script>
+  console.log("[Avatardle] inline sanity check running");
+  document.addEventListener("DOMContentLoaded", () => {
+    const d = document.createElement("div");
+    d.textContent = "Inline JS ran ✓";
+    d.style.cssText="position:fixed;left:12px;bottom:12px;background:#0b0f24;color:#fff;padding:6px 8px;border-radius:6px;z-index:9999;font:12px/1.3 system-ui";
+    document.body.appendChild(d);
+  });
+</script>
+
+
+<script>
+  // Register a Service Worker that rescues image requests by trying alternate paths
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js?v=1').then(
+        reg => console.log('[Avatardle] SW registered', reg.scope),
+        err => console.warn('[Avatardle] SW registration failed', err)
+      );
+    });
+  }
+</script>
+
+
+<!-- scripts: characters.js MUST load before app.js -->
+<script src="characters.js?v=9"></script>
+<script src="app.js?v=9" defer></script>
+
+
+</body>
+</html>
+
+
